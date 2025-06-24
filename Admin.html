@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Admin panel for uploading wallpapers to MIC Wallpapers">
+    <meta name="author" content="Alain B">
+    <title>Admin Panel - MIC Wallpapers</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background-color: #1a1a1a;
+            color: white;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 28px;
+            letter-spacing: 1px;
+        }
+        .back-button {
+            background: linear-gradient(45deg, #333, #555);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+        }
+        .back-button:hover {
+            background: linear-gradient(45deg, #555, #777);
+        }
+        .content {
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .login-form, .upload-form {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            margin-bottom: 20px;
+        }
+        .login-form label, .upload-form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .login-form input, .upload-form input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .upload-form input[type="file"] {
+            margin-bottom: 15px;
+        }
+        .login-form button, .upload-form button {
+            background: linear-gradient(45deg, #333, #555);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .login-form button:hover, .upload-form button:hover {
+            background: linear-gradient(45deg, #555, #777);
+        }
+        .preview-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .preview-item {
+            text-align: center;
+        }
+        .preview-item img {
+            max-width: 100%;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+        #htmlOutput {
+            margin-top: 20px;
+            background-color: #f8f8f8;
+            padding: 10px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+        .hidden {
+            display: none;
+        }
+        footer {
+            background-color: #1a1a1a;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            margin-top: auto;
+            font-size: 16px;
+        }
+        footer a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+        footer a:hover {
+            color: #66BB6A;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="index.html" class="back-button" aria-label="Back to home">Back</a>
+        <h1>ADMIN PANEL</h1>
+    </header>
+    <div class="content">
+        <div class="login-form" id="loginForm">
+            <h2>Admin Login</h2>
+            <label for="username">Username:</label>
+            <input type="text" id="username" placeholder="Enter username" required>
+            <label for="password">Password:</label>
+            <input type="password" id="password" placeholder="Enter password" required>
+            <button onclick="login()">Login</button>
+        </div>
+        <div class="upload-form hidden" id="uploadForm">
+            <h2>Upload Wallpapers</h2>
+            <label for="tags">Tags (e.g., sports red):</label>
+            <input type="text" id="tags" placeholder="Enter tags separated by spaces" required>
+            <label for="altText">Alt Text:</label>
+            <input type="text" id="altText" placeholder="e.g., Red Sports Car Wallpaper" required>
+            <label for="images">Select Images:</label>
+            <input type="file" id="images" accept="image/*" multiple required>
+            <button onclick="previewImages()">Preview Images</button>
+            <div class="preview-container" id="previewContainer"></div>
+            <button onclick="uploadImages()" style="margin-top: 20px;">Upload Images</button>
+            <div id="htmlOutput"></div>
+        </div>
+    </div>
+    <footer>
+        <p>© 2025 Alain B. <a href="privacy.html">Privacy Policy</a></p>
+    </footer>
+    <script>
+        // Login handling
+        function login() {
+            const username = document.getElementById("username").value.trim();
+            const password = document.getElementById("password").value;
+            if (username && password === "wallpaper") {
+                sessionStorage.setItem("isLoggedIn", "true");
+                document.getElementById("loginForm").classList.add("hidden");
+                document.getElementById("uploadForm").classList.remove("hidden");
+            } else {
+                alert("Invalid username or password. Password is 'wallpaper'.");
+            }
+        }
+
+        // Check login status
+        if (sessionStorage.getItem("isLoggedIn") === "true") {
+            document.getElementById("loginForm").classList.add("hidden");
+            document.getElementById("uploadForm").classList.remove("hidden");
+        }
+
+        let selectedFiles = [];
+
+        function previewImages() {
+            const files = document.getElementById("images").files;
+            const previewContainer = document.getElementById("previewContainer");
+            previewContainer.innerHTML = "";
+            selectedFiles = Array.from(files);
+
+            if (!selectedFiles.length) {
+                alert("Please select at least one image.");
+                return;
+            }
+
+            selectedFiles.forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const div = document.createElement("div");
+                    div.className = "preview-item";
+                    div.innerHTML = `
+                        <img src="${e.target.result}" alt="Preview">
+                        <p>${file.name}</p>
+                    `;
+                    previewContainer.appendChild(div);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        async function uploadImages() {
+            const tags = document.getElementById("tags").value.trim();
+            const altText = document.getElementById("altText").value.trim();
+            const htmlOutput = document.getElementById("htmlOutput");
+            let htmlSnippets = [];
+
+            if (!selectedFiles.length) {
+                alert("Please select at least one image.");
+                return;
+            }
+
+            if (!tags || !altText) {
+                alert("Please fill in tags and alt text.");
+                return;
+            }
+
+            // Check API support
+            if (!window.showDirectoryPicker) {
+                generateHtmlSnippets(tags, altText, selectedFiles, htmlSnippets, htmlOutput);
+                alert("File System Access API not supported. Use the provided snippets to manually update index.html, and save images to images/thumbnails/ and images/high-res/.");
+                return;
+            }
+
+            try {
+                // Prompt for directory access
+                const dirHandle = await window.showDirectoryPicker({ mode: 'readwrite' });
+                const thumbsDirHandle = await dirHandle.getDirectoryHandle("images/thumbnails", { create: true });
+                const highResDirHandle = await dirHandle.getDirectoryHandle("images/high-res", { create: true });
+                const indexFileHandle = await dirHandle.getFileHandle("index.html", { create: false });
+
+                // Read index.html
+                const indexFile = await indexFileHandle.getFile();
+                let indexText = await indexFile.text();
+
+                const timestamp = Date.now();
+
+                for (let i = 0; i < selectedFiles.length; i++) {
+                    const file = selectedFiles[i];
+                    const baseName = `image${timestamp}_${i + 1}`;
+
+                    // Save thumbnail
+                    const thumbBlob = await resizeImage(file, 300, 200);
+                    const thumbFileHandle = await thumbsDirHandle.getFileHandle(`${baseName}.webp`, { create: true });
+                    const thumbWritable = await thumbFileHandle.createWritable();
+                    await thumbWritable.write(thumbBlob);
+                    await thumbWritable.close();
+
+                    // Save high-res
+                    const highResBlob = await resizeImage(file, 1920, 1080);
+                    const highResFileHandle = await highResDirHandle.getFileHandle(`${baseName}-high-res.webp`, { create: true });
+                    const highResWritable = await highResFileHandle.createWritable();
+                    await highResWritable.write(highResBlob);
+                    await highResWritable.close();
+
+                    // Generate snippet
+                    const snippet = `
+<div class="wallpaper-item" data-tags="${tags}">
+    <img src="images/thumbnails/${baseName}.webp" alt="${altText}" loading="lazy">
+    <div class="wallpaper-info">
+        <p>${altText.replace(" Wallpaper", "")}</p>
+        <p>Tags: ${tags}</p>
+        <a href="images/high-res/${baseName}-high-res.webp" download class="download-button">Download</a>
+    </div>
+</div>
+                    `;
+                    htmlSnippets.push(snippet);
+
+                    // Append to index.html
+                    const gridEnd = indexText.lastIndexOf('</div><!-- End of grid-container -->');
+                    if (gridEnd === -1) {
+                        alert("Error: Could not find '</div><!-- End of grid-container -->' in index.html. Add snippets manually.");
+                        generateHtmlSnippets(tags, altText, selectedFiles, htmlSnippets, htmlOutput);
+                        return;
+                    }
+                    indexText = indexText.slice(0, gridEnd) + snippet + indexText.slice(gridEnd);
+                }
+
+                // Write updated index.html
+                const indexWritable = await indexFileHandle.createWritable();
+                await indexWritable.write(indexText);
+                await indexWritable.close();
+
+                htmlOutput.innerHTML = `Images uploaded and index.html updated! Snippets for reference:<br><pre>${htmlSnippets.join("\n")}</pre>`;
+                alert("Images added to index.html. Refresh the home page to see new boxes.");
+            } catch (error) {
+                console.error("Error uploading images:", error);
+                generateHtmlSnippets(tags, altText, selectedFiles, htmlSnippets, htmlOutput);
+                alert("Failed to upload images or update index.html. Check console (F12 > Console) for errors. Use the provided snippets to manually update index.html.");
+            }
+        }
+
+        function generateHtmlSnippets(tags, altText, files, htmlSnippets, htmlOutput) {
+            htmlSnippets.length = 0; // Clear previous snippets
+            files.forEach((file, index) => {
+                const baseName = `image${Date.now()}_${index + 1}`;
+                htmlSnippets.push(`
+<div class="wallpaper-item" data-tags="${tags}">
+    <img src="images/thumbnails/${baseName}.webp" alt="${altText}" loading="lazy">
+    <div class="wallpaper-info">
+        <p>${altText.replace(" Wallpaper", "")}</p>
+        <p>Tags: ${tags}</p>
+        <a href="images/high-res/${baseName}-high-res.webp" download class="download-button">Download</a>
+    </div>
+</div>
+                `);
+            });
+            htmlOutput.innerHTML = `
+                <p><strong>Manual Update Instructions:</strong></p>
+                <ol>
+                    <li>Save images as WebP files named <code>image[timestamp]_[number].webp</code> in <code>images/thumbnails/</code>.</li>
+                    <li>Save high-res versions as <code>image[timestamp]_[number]-high-res.webp</code> in <code>images/high-res/</code>.</li>
+                    <li>Open <code>index.html</code> in VS Code.</li>
+                    <li>Paste the following snippets just before <code></div><!-- End of grid-container --></code>.</li>
+                </ol>
+                <pre>${htmlSnippets.join("\n")}</pre>
+            `;
+        }
+
+        async function resizeImage(file, maxWidth, maxHeight) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.src = URL.createObjectURL(file);
+                img.onload = () => {
+                    const canvas = document.createElement("canvas");
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > maxWidth || height > maxHeight) {
+                        const ratio = Math.min(maxWidth / width, maxHeight / height);
+                        width = width * ratio;
+                        height = height * ratio;
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext("2d");
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    canvas.toBlob((blob) => {
+                        resolve(blob);
+                    }, "image/webp", 0.8);
+                };
+                img.onerror = () => reject(new Error("Failed to load image."));
+            });
+        }
+    </script>
+</body>
+</html>
