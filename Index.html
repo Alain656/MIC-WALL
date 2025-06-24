@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="MIC Wallpapers offers high-quality wallpapers in a 3-column grid gallery. Download free wallpapers now.">
+    <meta name="keywords" content="wallpapers, free wallpapers, high-quality wallpapers">
+    <meta name="author" content="Alain B">
+    <title>MIC Wallpapers - Free High-Quality Wallpapers</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        header {
+            background-color: #1a1a1a;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 36px;
+            letter-spacing: 2px;
+        }
+        .nav-links {
+            margin-top: 10px;
+        }
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 18px;
+            transition: color 0.3s ease;
+        }
+        .nav-links a:hover {
+            color: #4CAF50;
+        }
+        .search-bar {
+            margin: 10px auto;
+            max-width: 600px;
+            display: flex;
+            align-items: center;
+        }
+        .search-bar input {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 20px;
+            border: none;
+            width: 100%;
+            outline: none;
+            background-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+        .search-bar button {
+            background: linear-gradient(45deg, #333, #555);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        .search-bar button:hover {
+            background: linear-gradient(45deg, #555, #777);
+        }
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            padding: 16px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .wallpaper-item {
+            width: 100%;
+            max-width: 200px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .wallpaper-item:hover {
+            transform: scale(1.05);
+        }
+        .wallpaper-item img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            display: block;
+        }
+        .wallpaper-info {
+            padding: 10px;
+        }
+        .wallpaper-info p {
+            margin: 5px 0;
+            font-size: 14px;
+            color: #333;
+        }
+        .wallpaper-info .download-button {
+            display: inline-block;
+            margin-top: 5px;
+            padding: 8px 12px;
+            background: linear-gradient(45deg, #333, #555);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .wallpaper-info .download-button:hover {
+            background: linear-gradient(45deg, #555, #777);
+        }
+        footer {
+            background-color: #1a1a1a;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            margin-top: auto;
+            font-size: 16px;
+        }
+        footer a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+        footer a:hover {
+            color: #66BB6A;
+        }
+        @media (max-width: 768px) {
+            .grid-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .wallpaper-item {
+                max-width: 150px;
+            }
+            .wallpaper-item img {
+                height: 100px;
+            }
+            .search-bar input {
+                width: 80%;
+            }
+        }
+        @media (max-width: 480px) {
+            .grid-container {
+                grid-template-columns: 1fr;
+            }
+            .wallpaper-item {
+                max-width: 120px;
+            }
+            header h1 {
+                font-size: 24px;
+            }
+            .nav-links a {
+                margin: 0 10px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>MIC WALLPAPERS</h1>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="admin.html">Admin</a>
+        </div>
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Search wallpapers..." aria-label="Search wallpapers" oninput="filterImages()">
+            <button onclick="filterImages()">Search</button>
+        </div>
+    </header>
+    <div class="grid-container" id="horizontalGrid">
+        <!-- Placeholder image card -->
+        <div class="wallpaper-item" data-tags="sample">
+            <img src="https://via.placeholder.com/300x200" alt="Sample Wallpaper" loading="lazy">
+            <div class="wallpaper-info">
+                <p>Sample Wallpaper</p>
+                <p>Tags: sample</p>
+                <a href="#" class="download-button">Download</a>
+            </div>
+        </div>
+        <!-- Previous image card -->
+        <div class="wallpaper-item" data-tags="sports red">
+            <img src="images/thumbnails/image1234567890_1.webp" alt="Red Sports Car Wallpaper" loading="lazy">
+            <div class="wallpaper-info">
+                <p>Red Sports Car</p>
+                <p>Tags: sports red</p>
+                <a href="images/high-res/image1234567890_1-high-res.webp" download class="download-button">Download</a>
+            </div>
+        </div>
+        <!-- New wallpaper boxes -->
+        <div class="wallpaper-item" data-tags="nature green">
+            <img src="https://via.placeholder.com/300x200/00FF00/FFFFFF" alt="Green Forest Wallpaper" loading="lazy">
+            <div class="wallpaper-info">
+                <p>Green Forest</p>
+                <p>Tags: nature green</p>
+                <a href="https://via.placeholder.com/1920x1080/00FF00/FFFFFF" download class="download-button">Download</a>
+            </div>
+        </div>
+        <div class="wallpaper-item" data-tags="city night">
+            <img src="https://via.placeholder.com/300x200/0000FF/FFFFFF" alt="City Night Skyline Wallpaper" loading="lazy">
+            <div class="wallpaper-info">
+                <p>City Night Skyline</p>
+                <p>Tags: city night</p>
+                <a href="https://via.placeholder.com/1920x1080/0000FF/FFFFFF" download class="download-button">Download</a>
+            </div>
+        </div>
+        <div class="wallpaper-item" data-tags="abstract blue">
+            <img src="https://via.placeholder.com/300x200/0000CC/FFFFFF" alt="Abstract Blue Patterns Wallpaper" loading="lazy">
+            <div class="wallpaper-info">
+                <p>Abstract Blue Patterns</p>
+                <p>Tags: abstract blue</p>
+                <a href="https://via.placeholder.com/1920x1080/0000CC/FFFFFF" download class="download-button">Download</a>
+            </div>
+        </div>
+        <div class="wallpaper-item" data-tags="ocean beach">
+            <img src="https://via.placeholder.com/300x200/00FFFF/FFFFFF" alt="Ocean Beach Sunset Wallpaper" loading="lazy">
+            <div class="wallpaper-info">
+                <p>Ocean Beach Sunset</p>
+                <p>Tags: ocean beach</p>
+                <a href="https://via.placeholder.com/1920x1080/00FFFF/FFFFFF" download class="download-button">Download</a>
+            </div>
+        </div>
+        <div class="wallpaper-item" data-tags="mountain snow">
+            <img src="https://via.placeholder.com/300x200/FFFFFF/000000" alt="Snowy Mountain Peak Wallpaper" loading="lazy">
+            <div class="wallpaper-info">
+                <p>Snowy Mountain Peak</p>
+                <p>Tags: mountain snow</p>
+                <a href="https://via.placeholder.com/1920x1080/FFFFFF/000000" download class="download-button">Download</a>
+            </div>
+        </div>
+        <div class="wallpaper-item" data-tags="space stars">
+            <img src="https://via.placeholder.com/300x200/800080/FFFFFF" alt="Starry Night Sky Wallpaper" loading="lazy">
+            <div class="wallpaper-info">
+                <p>Starry Night Sky</p>
+                <p>Tags: space stars</p>
+                <a href="https://via.placeholder.com/1920x1080/800080/FFFFFF" download class="download-button">Download</a>
+            </div>
+        </div>
+        <div class="wallpaper-item" data-tags="forest autumn">
+            <img src="https://via.placeholder.com/300x200/FFA500/FFFFFF" alt="Autumn Forest Path Wallpaper" loading="lazy">
+            <div class="wallpaper-info">
+                <p>Autumn Forest Path</p>
+                <p>Tags: forest autumn</p>
+                <a href="https://via.placeholder.com/1920x1080/FFA500/FFFFFF" download class="download-button">Download</a>
+            </div>
+        </div>
+        <div class="wallpaper-item" data-tags="desert sand">
+            <img src="https://via.placeholder.com/300x200/FFFF00/000000" alt="Desert Dunes Wallpaper" loading="lazy">
+            <div class="wallpaper-info">
+                <p>Desert Dunes</p>
+                <p>Tags: desert sand</p>
+                <a href="https://via.placeholder.com/1920x1080/FFFF00/000000" download class="download-button">Download</a>
+            </div>
+        </div>
+        <!-- Future images will append here -->
+    </div><!-- End of grid-container -->
+    <footer>
+        <p>© 2025 Alain B. <a href="privacy.html">Privacy Policy</a></p>
+    </footer>
+    <script>
+        // Filter images
+        function filterImages() {
+            const input = document.getElementById('searchInput').value.toLowerCase();
+            const items = document.querySelectorAll('.wallpaper-item');
+            items.forEach(item => {
+                const tags = item.getAttribute('data-tags').toLowerCase();
+                const title = item.querySelector('.wallpaper-info p:first-child').textContent.toLowerCase();
+                item.style.display = tags.includes(input) || title.includes(input) ? '' : 'none';
+            });
+        }
+    </script>
+</body>
+</html>
